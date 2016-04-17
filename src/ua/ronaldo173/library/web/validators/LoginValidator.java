@@ -25,11 +25,11 @@ public class LoginValidator implements Validator {
             }
 
             if (!Character.isLetter(newValue.charAt(0))) {
-                throw new IllegalArgumentException(bundle.getString("first_letter_error"));
+                throw new IllegalArgumentException(bundle.getString("login_start_from_num_error"));
             }
 
             if (getTestArray().contains(newValue)) {
-                throw new IllegalArgumentException(bundle.getString("used_name"));
+                throw new IllegalArgumentException(bundle.getString("login_already_exists_error"));
             }
 
 
