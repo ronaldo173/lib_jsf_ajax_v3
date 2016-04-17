@@ -33,7 +33,12 @@
             <div class="search_div">
                 <h:form styleClass="search_form">
                     <h:inputText id="search_string" styleClass="search_string" value="#{searchController.searchString}"/>
-                    <h:commandButton action="#{searchController.fillBooksBySearch()}" value="#{msg.search}" styleClass="search_button"/>
+
+                    <h:commandButton value="#{msg.search}" styleClass="search_button">
+                        <f:ajax onevent="showProgress" execute="@form" render=":booksList @form :lettersForm :pages1 :pages2 :booksCount"
+                                listener="#{searchController.fillBooksBySearch}"/>
+                    </h:commandButton>
+
                     <h:selectOneMenu value="#{searchController.searchType}">
                         <f:selectItems value="${searchController.searchList}" />
                     </h:selectOneMenu>
@@ -44,9 +49,11 @@
                 <h:form id="lettersForm">
                     <ui:repeat value="#{searchController.russianLetters}" var="letter">
 
-                        <h:commandLink value="#{letter}" action="#{searchController.fillBooksByLetter()}" styleClass="#{letter == searchController.selectedLetter ? 'selected_letter':''}">
+                        <h:commandLink value="#{letter}" styleClass="#{letter == searchController.selectedLetter ? 'selected_letter':''}">
 
                             <f:param name="letter" value="#{letter}" />
+                            <f:ajax onevent="showProgress" event="click" render=":booksList @form :lettersForm :pages1 :pages2 :booksCount"
+                                    listener="#{searchController.fillBooksByLetter}"/>
 
                         </h:commandLink>
 
