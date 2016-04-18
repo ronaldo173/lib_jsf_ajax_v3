@@ -2,9 +2,9 @@ package ua.ronaldo173.library.web.beans;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 /**
  * Created by Santer on 17.04.2016.
@@ -13,7 +13,18 @@ import java.util.Locale;
 @SessionScoped
 public class LocaleChanger implements Serializable {
 
-    private Locale currLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    private Locale currLocale = null;
+    private Logger log = Logger.getLogger(LocaleChanger.class.getName());
+
+    public LocaleChanger() {
+//        try {
+//            currLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+//        } catch (Exception e) {
+//            currLocale = new Locale.Builder().setLanguage("ru").build();
+////            e.printStackTrace();
+//        }
+        changeLocale("ru");
+    }
 
     public void changeLocale(String localeCode) {
         currLocale = new Locale(localeCode);
@@ -23,3 +34,4 @@ public class LocaleChanger implements Serializable {
         return currLocale;
     }
 }
+
