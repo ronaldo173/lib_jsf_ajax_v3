@@ -15,7 +15,8 @@
 
 
         <ui:define name="books_count">
-            <h:outputText value="#{msg.book_count} #{bookListController.totalBooksCount}" id="booksCount"></h:outputText>
+            <h:outputText value="#{msg.book_count} #{bookListController.totalBooksCount}"
+                          id="booksCount"></h:outputText>
         </ui:define>
 
 
@@ -46,9 +47,21 @@
                         <p><strong>#{msg.publish_year}</strong> #{b.publishDate} г.</p>
 
                         <p><strong>#{msg.isbn}</strong> #{b.isbn}</p>
-                        <p><h:graphicImage library="images" name="book.gif"/><h:outputLink styleClass="content_link"
-                                                                                           value="#{request.contextPath}/PdfContent?id=#{b.id}"
-                                                                                           target="_blank">#{msg.read} </h:outputLink>
+                        <p><h:graphicImage library="images" name="book.gif"/>
+                            <h:outputLink styleClass="content_link"
+                                          value="#{request.contextPath}/PdfContent"
+                                          target="_blank">
+                                <h:outputText value="#{msg.read}"/>
+                                <f:param name="id" value="#{b.id}"/>
+                            </h:outputLink>
+
+                            <h:graphicImage library="images" name="download.png"/>
+
+                            <h:outputLink styleClass="save_link" value="#{request.contextPath}/SavePdf"
+                                          target="_blank">
+                                <h:outputText value="#{msg.download}"/>
+                                <f:param name="id" value="#{b.id}"/>
+                            </h:outputLink>
                         </p>
                     </div>
 

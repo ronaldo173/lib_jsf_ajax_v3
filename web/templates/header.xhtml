@@ -19,17 +19,15 @@
         </div>
         <div class="descr">
             <h3>#{msg.welcome_title}</h3>
-
         </div>
 
         <div class="welcome">
 
 
             <ui:include src="locales.xhtml"/>
-            <p><i>#{msg.welcome}, #{user.username}</i></p>
-
-            <h:form>
-                <h:commandLink action="#{loginController.exit()}" value="#{msg.exit}"/>
+            <h:form id="welcome_msg2">
+                <p><i>#{msg.welcome}, #{user.username}</i></p>
+                <h:commandLink style="font-size: 14px" action="#{loginController.exit()}" value="#{msg.exit}"/>
             </h:form>
         </div>
 
