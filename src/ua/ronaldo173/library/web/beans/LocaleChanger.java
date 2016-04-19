@@ -14,16 +14,8 @@ import java.util.logging.Logger;
 public class LocaleChanger implements Serializable {
 
     private Locale currLocale = null;
-    private Logger log = Logger.getLogger(LocaleChanger.class.getName());
 
     public LocaleChanger() {
-//        try {
-//            currLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-//        } catch (Exception e) {
-//            currLocale = new Locale.Builder().setLanguage("ru").build();
-////            e.printStackTrace();
-//        }
-        changeLocale("ru");
     }
 
     public void changeLocale(String localeCode) {

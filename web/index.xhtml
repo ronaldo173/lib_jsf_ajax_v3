@@ -3,7 +3,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view locale="#{localeChanger.currLocale}">
     <h:head>
         <title>#{msg.welcome_title}</title>
@@ -17,17 +17,20 @@
             <h4> JavaScript выключен</h4>
         </noscript>
 
-        <div class="main">
+        <div class="main" >
 
-            <div class="content">
+            <div class="content" >
                 <p class="title"><h:graphicImage library="images" name="lib.png"/></p>
-                <p class="title">#{msg.index_title}</p>
+                <h:form id="welcome_msg">
+                    <p class="title">#{msg.index_title}</p>
+                </h:form>
+
             </div>
 
             <div class="login_div">
 
 
-                <h:form styleClass="login_form">
+                <h:form styleClass="login_form" id="index_form">
 
                     <table align="left" width="350">
                         <tr>
@@ -54,6 +57,8 @@
 
 
                 </h:form>
+
+                <ui:include src="/templates/locales.xhtml"/>
 
             </div>
 
