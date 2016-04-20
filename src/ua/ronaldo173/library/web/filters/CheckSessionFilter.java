@@ -4,30 +4,17 @@
  */
 package ua.ronaldo173.library.web.filters;
 
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
+import java.util.*;
 
-@WebFilter(filterName= "CheckSessionFilter", 
-urlPatterns= "/pages/*")
+@WebFilter(filterName = "CheckSessionFilter",
+        urlPatterns = "/pages/*")
 public class CheckSessionFilter implements Filter {
 
     private static final boolean debug = false;
@@ -37,6 +24,20 @@ public class CheckSessionFilter implements Filter {
     private FilterConfig filterConfig = null;
 
     public CheckSessionFilter() {
+    }
+
+    public static String getStackTrace(Throwable t) {
+        String stackTrace = null;
+        try {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            t.printStackTrace(pw);
+            pw.close();
+            sw.close();
+            stackTrace = sw.getBuffer().toString();
+        } catch (Exception ex) {
+        }
+        return stackTrace;
     }
 
     private void doBeforeProcessing(RequestWrapper request, ResponseWrapper response)
@@ -51,7 +52,7 @@ public class CheckSessionFilter implements Filter {
         // For example, a filter that implements setParameter() on a request
         // wrapper could set parameters on the request before passing it on
         // to the filter chain.
-	/*
+    /*
          String [] valsOne = {"val1a", "val1b"};
          String [] valsTwo = {"val2a", "val2b", "val2c"};
          request.setParameter("name1", valsOne);
@@ -88,7 +89,7 @@ public class CheckSessionFilter implements Filter {
         // the rest of the filter chain is invoked.
 
         // For example, a logging filter might log the attributes on the
-        // request object after the request has been processed. 
+        // request object after the request has been processed.
 	/*
          for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
          String name = (String)en.nextElement();
@@ -102,7 +103,7 @@ public class CheckSessionFilter implements Filter {
 	/*
          PrintWriter respOut = new PrintWriter(response.getWriter());
          respOut.println("<p><strong>This has been appended by an intrusive filter.</strong></p>");
-	
+
          respOut.println("<p>Params (after the filter chain):<br>");
          for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
          String name = (String)en.nextElement();
@@ -124,16 +125,14 @@ public class CheckSessionFilter implements Filter {
     }
 
     /**
-     *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param chain The filter chain we are processing
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @param chain    The filter chain we are processing
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain)
+                         FilterChain chain)
             throws IOException, ServletException {
 
         if (debug) {
@@ -156,7 +155,7 @@ public class CheckSessionFilter implements Filter {
         Throwable problem = null;
 
         HttpSession session = wrappedRequest.getSession(false);
-        if (session == null || session.isNew()){                
+        if (session == null || session.isNew()) {
             wrappedResponse.sendRedirect(wrappedRequest.getContextPath() + "/index.xhtml");
         } else {
             chain.doFilter(wrappedRequest, wrappedResponse);
@@ -256,20 +255,6 @@ public class CheckSessionFilter implements Filter {
         }
     }
 
-    public static String getStackTrace(Throwable t) {
-        String stackTrace = null;
-        try {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            t.printStackTrace(pw);
-            pw.close();
-            sw.close();
-            stackTrace = sw.getBuffer().toString();
-        } catch (Exception ex) {
-        }
-        return stackTrace;
-    }
-
     public void log(String msg) {
         filterConfig.getServletContext().log(msg);
     }
@@ -283,13 +268,14 @@ public class CheckSessionFilter implements Filter {
      */
     class RequestWrapper extends HttpServletRequestWrapper {
 
-        public RequestWrapper(HttpServletRequest request) {
-            super(request);
-        }
         // You might, for example, wish to add a setParameter() method. To do this
         // you must also override the getParameter, getParameterValues, getParameterMap,
         // and getParameterNames methods.
         protected Hashtable localParams = null;
+
+        public RequestWrapper(HttpServletRequest request) {
+            super(request);
+        }
 
         public void setParameter(String name, String[] values) {
             if (debug) {
@@ -301,7 +287,7 @@ public class CheckSessionFilter implements Filter {
                 // Copy the parameters from the underlying request.
                 Map wrappedParams = getRequest().getParameterMap();
                 Set keySet = wrappedParams.keySet();
-                for (Iterator it = keySet.iterator(); it.hasNext();) {
+                for (Iterator it = keySet.iterator(); it.hasNext(); ) {
                     Object key = it.next();
                     Object value = wrappedParams.get(key);
                     localParams.put(key, value);

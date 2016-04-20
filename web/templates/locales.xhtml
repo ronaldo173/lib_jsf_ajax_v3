@@ -26,13 +26,13 @@
                 <p>
                     <h:commandLink action="#{localeChanger.changeLocale('en')}">
                         <f:ajax render=":booksList @form :lettersForm :pages1 :pages2 :booksCount
-                         search_type_form :index_form :welcome_msg"/>
+                         search_type_form :index_form :welcome_msg :booksForm"/>
                         <h:graphicImage library="images" name="eng.png" title="#{msg.english}"/>
                     </h:commandLink>
 
                     <h:commandLink action="#{localeChanger.changeLocale('ru')}">
                         <f:ajax render=":booksList @form :lettersForm :pages1 :pages2 :booksCount
-                         search_type_form :index_form :welcome_msg"/>
+                         search_type_form :index_form :welcome_msg :booksForm"/>
                         <h:graphicImage library="images" name="rus.png" title="#{msg.russian}"/>
                     </h:commandLink>
 

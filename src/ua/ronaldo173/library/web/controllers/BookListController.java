@@ -1,24 +1,19 @@
 package ua.ronaldo173.library.web.controllers;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import ua.ronaldo173.library.web.beans.Book;
+import ua.ronaldo173.library.web.db.Database;
+import ua.ronaldo173.library.web.enums.SearchType;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
-
-import ua.ronaldo173.library.web.beans.Book;
-import ua.ronaldo173.library.web.db.Database;
-import ua.ronaldo173.library.web.enums.SearchType;
+import java.io.Serializable;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @ManagedBean(eager = true)
@@ -35,11 +30,12 @@ public class BookListController implements Serializable {
     private SearchType searchType;// хранит выбранный тип поиска
     private String searchString; // хранит поисковую строку
     private ArrayList<Book> currentBookList; // текущий список книг для отображения
+    private boolean editMode;
+
     private String currentSql;// последний выполнный sql без добавления limit
 
     public BookListController() {
         fillBooksAll();
-
 
 
     }
@@ -67,7 +63,6 @@ public class BookListController implements Serializable {
                 fillPageNumbers(totalBooksCount, booksOnPage);
 
             }
-
 
 
             if (totalBooksCount > booksOnPage) {
@@ -98,15 +93,7 @@ public class BookListController implements Serializable {
             Logger.getLogger(BookListController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                closeDbCon(conn, stmt, rs);
             } catch (SQLException ex) {
                 Logger.getLogger(BookListController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -143,7 +130,6 @@ public class BookListController implements Serializable {
                 + "inner join genre g on b.genre_id=g.id "
                 + "inner join publisher p on b.publisher_id=p.id "
                 + "where genre_id=" + selectedGenreId + " order by b.name ");
-
 
 
         return "books";
@@ -192,11 +178,68 @@ public class BookListController implements Serializable {
         }
 
 
-
         fillBooksBySQL(sql.toString());
 
 
         return "books";
+    }
+
+    public String updateBooks() {
+        imitateLoading();
+
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Connection connection = null;
+
+        try {
+            connection = Database.getConnection();
+            String queryUpdate = "UPDATE book SET name=?, isbn=?, page_count=?, publish_year=?, desc=? WHERE id=?";
+            statement = connection.prepareStatement(queryUpdate);
+
+            for (Book book : currentBookList) {
+                statement.setString(1, book.getName());
+                statement.setString(2, book.getIsbn());
+                statement.setInt(3, book.getPageCount());
+                statement.setInt(4, book.getPublishDate());
+                statement.setString(5, book.getDescr());
+                statement.setLong(6, book.getId());
+
+                statement.addBatch();
+            }
+
+            statement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                closeDbCon(connection, statement, resultSet);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        switchEditMode();
+        return "books";
+    }
+
+    public void switchEditMode() {
+        this.editMode = !this.editMode;
+    }
+
+    public boolean isEditMode() {
+        return this.editMode;
+    }
+
+    private void closeDbCon(Connection connection, Statement statement, ResultSet resultSet) throws SQLException {
+        if (resultSet != null) {
+            resultSet.close();
+        }
+        if (statement != null) {
+            statement.close();
+        }
+        if (connection != null) {
+            connection.close();
+        }
     }
 
     public void selectPage() {
@@ -227,15 +270,7 @@ public class BookListController implements Serializable {
                     .getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                closeDbCon(conn, stmt, rs);
             } catch (SQLException ex) {
                 Logger.getLogger(Book.class
                         .getName()).log(Level.SEVERE, null, ex);
@@ -267,15 +302,7 @@ public class BookListController implements Serializable {
                     .getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (rs != null) {
-                    rs.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                closeDbCon(conn, stmt, rs);
             } catch (SQLException ex) {
                 Logger.getLogger(Book.class
                         .getName()).log(Level.SEVERE, null, ex);
@@ -371,12 +398,12 @@ public class BookListController implements Serializable {
         return currentBookList;
     }
 
-    public void setTotalBooksCount(long booksCount) {
-        this.totalBooksCount = booksCount;
-    }
-
     public long getTotalBooksCount() {
         return totalBooksCount;
+    }
+
+    public void setTotalBooksCount(long booksCount) {
+        this.totalBooksCount = booksCount;
     }
 
     public int getSelectedGenreId() {
@@ -403,12 +430,12 @@ public class BookListController implements Serializable {
         this.booksOnPage = booksOnPage;
     }
 
-    public void setSelectedPageNumber(long selectedPageNumber) {
-        this.selectedPageNumber = selectedPageNumber;
-    }
-
     public long getSelectedPageNumber() {
         return selectedPageNumber;
+    }
+
+    public void setSelectedPageNumber(long selectedPageNumber) {
+        this.selectedPageNumber = selectedPageNumber;
     }
 
     private void imitateLoading() {

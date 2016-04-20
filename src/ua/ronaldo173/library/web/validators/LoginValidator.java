@@ -1,13 +1,13 @@
 package ua.ronaldo173.library.web.validators;
 
-import java.util.ArrayList;
-import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 @FacesValidator("LoginValidator")
 public class LoginValidator implements Validator {
@@ -47,5 +47,5 @@ public class LoginValidator implements Validator {
         list.add("login");
         return list;
     }
-    
+
 }

@@ -1,5 +1,10 @@
 package ua.ronaldo173.library.web.controllers;
 
+import ua.ronaldo173.library.web.beans.Genre;
+import ua.ronaldo173.library.web.db.Database;
+
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,10 +13,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
-import ua.ronaldo173.library.web.beans.Genre;
-import ua.ronaldo173.library.web.db.Database;
 
 @ManagedBean(eager = true)
 @ApplicationScoped

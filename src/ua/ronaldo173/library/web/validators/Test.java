@@ -11,17 +11,18 @@ public class Test {
     }
 }
 
-class A{
-    public A(){
+class A {
+    public A() {
         print();
     }
-    final void print(){
+
+    final void print() {
         System.out.println("A");
     }
 }
 
-class B extends A{
-     void print1() {
+class B extends A {
+    void print1() {
         System.out.println("B");
     }
 }

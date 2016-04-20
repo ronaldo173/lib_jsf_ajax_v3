@@ -4,7 +4,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * Created by Santer on 17.04.2016.

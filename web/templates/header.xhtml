@@ -25,7 +25,7 @@
 
 
             <ui:include src="locales.xhtml"/>
-            <h:form id="welcome_msg2">
+            <h:form id="welcome_msg">
                 <p><i>#{msg.welcome}, #{user.username}</i></p>
                 <h:commandLink style="font-size: 14px" action="#{loginController.exit()}" value="#{msg.exit}"/>
             </h:form>
@@ -60,7 +60,7 @@
 
                         <f:param name="letter" value="#{letter}"/>
                         <f:ajax onevent="showProgress" event="click"
-                                render=":booksList @form :lettersForm :pages1 :pages2 :booksCount"
+                                render=" :booksForm :booksList @form :lettersForm :pages1 :pages2 :booksCount"
                                 listener="#{bookListController.fillBooksByLetter}"/>
 
                     </h:commandLink>
