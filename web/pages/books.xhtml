@@ -57,10 +57,12 @@
 
                             <h:graphicImage library="images" name="download.png"/>
 
-                            <h:outputLink styleClass="save_link" value="#{request.contextPath}/SavePdf"
+                            <h:outputLink styleClass="save_link" value="#{request.contextPath}/PdfContent"
                                           target="_blank">
                                 <h:outputText value="#{msg.download}"/>
                                 <f:param name="id" value="#{b.id}"/>
+                                <f:param name="filename" value="#{b.name}"/>
+                                <f:param name="save" value="true"/>
                             </h:outputLink>
                         </p>
                     </div>

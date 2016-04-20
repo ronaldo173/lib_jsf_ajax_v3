@@ -4,17 +4,19 @@
  */
 package ua.ronaldo173.library.web.servlets;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import ua.ronaldo173.library.web.controllers.BookListController;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import ua.ronaldo173.library.web.controllers.BookListController;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 
 @WebServlet(name = "PdfContent",
-urlPatterns = {"/PdfContent"})
+        urlPatterns = {"/PdfContent"})
 public class PdfContent extends HttpServlet {
 
     /**
@@ -22,10 +24,10 @@ public class PdfContent extends HttpServlet {
      * <code>GET</code> and
      * <code>POST</code> methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,9 +35,15 @@ public class PdfContent extends HttpServlet {
         OutputStream out = response.getOutputStream();
         try {
             int id = Integer.valueOf(request.getParameter("id"));
+            Boolean save = Boolean.valueOf(request.getParameter("save"));
+            String fileName = request.getParameter("filename");
             BookListController bookListController = (BookListController) request.getSession(false).getAttribute("bookListController");
             byte[] content = bookListController.getContent(id);
             response.setContentLength(content.length);
+            if (save) {
+                response.setHeader("Content-Disposition", "attachment; filename=" +
+                        URLEncoder.encode(fileName, "UTF-8") + ".pdf");
+            }
             out.write(content);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -45,14 +53,15 @@ public class PdfContent extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+
     /**
      * Handles the HTTP
      * <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -64,10 +73,10 @@ public class PdfContent extends HttpServlet {
      * Handles the HTTP
      * <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
