@@ -16,6 +16,8 @@ public class Book implements Serializable {
     private byte[] image;
     private String descr;
 
+    private boolean edit;
+
     public long getId() {
         return id;
     }
@@ -103,4 +105,14 @@ public class Book implements Serializable {
     public void setDescr(String descr) {
         this.descr = descr;
     }
+
+    public boolean isEdit(){
+        return this.edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
+
+
 }

@@ -21,13 +21,14 @@ import java.util.logging.Logger;
 public class BookListController implements Serializable {
 
     private boolean requestFromPager;
-    private int booksOnPage = 2;
+    private int booksOnPage = 3;
+    private int pageCount;//vsego str
     private int selectedGenreId; // выбранный жанр
     private char selectedLetter; // выбранная буква алфавита
     private long selectedPageNumber = 1; // выбранный номер страницы в постраничной навигации
     private long totalBooksCount; // общее кол-во книг (не на текущей странице, а всего), нажно для постраничности
     private ArrayList<Integer> pageNumbers = new ArrayList<Integer>(); // общее кол-во книг (не на текущей странице, а всего), нажно для постраничности
-    private SearchType searchType;// хранит выбранный тип поиска
+    private SearchType searchType = SearchType.TITLE;// хранит выбранный тип поиска
     private String searchString; // хранит поисковую строку
     private ArrayList<Book> currentBookList; // текущий список книг для отображения
     private boolean editMode;
@@ -218,16 +219,34 @@ public class BookListController implements Serializable {
             }
         }
 
-        switchEditMode();
+        cancelEdit();
         return "books";
     }
 
-    public void switchEditMode() {
-        this.editMode = !this.editMode;
-    }
 
     public boolean isEditMode() {
         return this.editMode;
+    }
+
+    public void showEdit() {
+        editMode = true;
+    }
+
+    public void showEditAll() {
+        editMode = true;
+        for (Book book : currentBookList) {
+            book.setEdit(true);
+        }
+    }
+
+
+
+    public void cancelEdit() {
+        editMode = false;
+
+        for (Book book : currentBookList) {
+            book.setEdit(false);
+        }
     }
 
     private void closeDbCon(Connection connection, Statement statement, ResultSet resultSet) throws SQLException {
@@ -243,6 +262,7 @@ public class BookListController implements Serializable {
     }
 
     public void selectPage() {
+        cancelEdit();
         imitateLoading();
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         selectedPageNumber = Integer.valueOf(params.get("page_number"));
@@ -361,13 +381,23 @@ public class BookListController implements Serializable {
 
     private void fillPageNumbers(long totalBooksCount, int booksCountOnPage) {
 
-        int pageCount = booksCountOnPage > 0 ? (int) ((totalBooksCount / booksCountOnPage) + 1) : 0;
+        if (totalBooksCount % booksCountOnPage == 0) {
+            pageCount = booksCountOnPage > 0 ? (int) (totalBooksCount / booksCountOnPage) : 0;
+        } else pageCount = booksCountOnPage > 0 ? ((int) (totalBooksCount / booksCountOnPage) + 1) : 0;
 
         pageNumbers.clear();
-        for (int i = 1; i <= pageCount; i++) {
-            pageNumbers.add(i);
+        for (int i = 0; i < pageCount; i++) {
+            pageNumbers.add(i + 1);
         }
+    }
 
+    public void booksOnPageChanged(ValueChangeEvent event) {
+        imitateLoading();
+        cancelEdit();
+        requestFromPager = false;
+        booksOnPage = Integer.valueOf(event.getNewValue().toString());
+        selectedPageNumber = 1;
+        fillBooksBySQL(currentSql);
     }
 
     public ArrayList<Integer> getPageNumbers() {
@@ -436,6 +466,10 @@ public class BookListController implements Serializable {
 
     public void setSelectedPageNumber(long selectedPageNumber) {
         this.selectedPageNumber = selectedPageNumber;
+    }
+
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
     }
 
     private void imitateLoading() {

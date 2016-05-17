@@ -33,12 +33,12 @@
 
 
         <div class="search_div">
-            <h:form styleClass="search_form">
+            <h:form styleClass="search_form" id="search_form">
                 <h:inputText id="search_string" styleClass="search_string" value="#{bookListController.searchString}"/>
 
                 <h:commandButton value="#{msg.search}" styleClass="search_button">
                     <f:ajax onevent="showProgress" execute="@form"
-                            render=":booksList @form :lettersForm :pages1 :pages2 :booksCount"
+                            render=":booksForm :booksList @form :lettersForm :pages1 :pages2 :booksCount"
                             listener="#{bookListController.fillBooksBySearch}"/>
                 </h:commandButton>
             </h:form>
@@ -60,7 +60,7 @@
 
                         <f:param name="letter" value="#{letter}"/>
                         <f:ajax onevent="showProgress" event="click"
-                                render=" :booksForm :booksList @form :lettersForm :pages1 :pages2 :booksCount"
+                                render=":booksForm :booksList @form :lettersForm :pages1 :pages2 :booksCount"
                                 listener="#{bookListController.fillBooksByLetter}"/>
 
                     </h:commandLink>

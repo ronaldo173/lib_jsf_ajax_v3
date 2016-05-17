@@ -5,9 +5,12 @@ package ua.ronaldo173.library.web.validators;
  */
 public class Test {
     public static void main(String[] args) {
-//        B b = new B();
 
-        A a = new B();
+        for (int i = 0; i < 3; i++) {
+            System.out.println(i+1);
+            System.out.println(i);
+            System.out.println("\n");
+        }
     }
 }
 
